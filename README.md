@@ -4,7 +4,7 @@ A crew of computer-use agents. Each session owns one or more mice. Several sessi
 
 The name is the Spanish word for a work crew. CUA is the start of the word. The mark is three pointers: Violet, Amber, Mint. A session's mice keep those inks, in order, through Slate.
 
-`cuadrilla demo` opens Calculator and a scratch TextEdit file in the background, gives the crew two mice, and tries one action in each. It does not take the desktop pointer. Add `--keep` to leave the cursors up.
+`cuadrilla demo --keep` opens Calculator and a scratch TextEdit file in the background and leaves the cursors up. Then `cuadrilla press 1` and `cuadrilla type hello`. `cuadrilla stop` closes every crew.
 
 ## Engine
 

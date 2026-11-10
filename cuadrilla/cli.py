@@ -24,6 +24,13 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("uninstall")
     demo = sub.add_parser("demo", help="two mice, Calculator and a scratch TextEdit file, no focus steal")
     demo.add_argument("--keep", action="store_true", help="leave the crew and its cursors open")
+    press = sub.add_parser("press", help="press a labeled button in the leased app")
+    press.add_argument("label")
+    press.add_argument("--mouse", default="")
+    typed = sub.add_parser("type", help="type into the leased text area")
+    typed.add_argument("text")
+    typed.add_argument("--mouse", default="")
+    sub.add_parser("stop", help="close every crew and drop its cursors")
 
     open_p = sub.add_parser("session")
     session_sub = open_p.add_subparsers(dest="session_cmd", required=True)
@@ -110,10 +117,10 @@ def _kind(args: argparse.Namespace) -> str:
 def _mirror(args: argparse.Namespace, body: dict) -> None:
     from cuadrilla.cmux import mirror
 
-    if args.cmd not in {"doctor", "status", "windows", "session", "mice", "observe", "lease", "release", "act", "demo"}:
+    if args.cmd not in {"doctor", "status", "windows", "session", "mice", "observe", "lease", "release", "act", "demo", "press", "type", "stop"}:
         return
     state = body if "sessions" in body else None
-    if state is None and args.cmd in {"session", "mice", "lease", "release", "act", "status", "demo"}:
+    if state is None and args.cmd in {"session", "mice", "lease", "release", "act", "status", "demo", "press", "type", "stop"}:
         try:
             state = request("status")
         except Exception:
@@ -128,6 +135,18 @@ def _call(args: argparse.Namespace) -> dict:
         from cuadrilla.demo import run_demo
 
         return run_demo(request, keep=args.keep)
+    if args.cmd == "press":
+        from cuadrilla.hands import press
+
+        return press(request, args.label, args.mouse)
+    if args.cmd == "type":
+        from cuadrilla.hands import type_text
+
+        return type_text(request, args.text, args.mouse)
+    if args.cmd == "stop":
+        from cuadrilla.hands import stop
+
+        return stop(request)
     if args.cmd == "status":
         return request("status")
     if args.cmd == "windows":

@@ -208,6 +208,44 @@ def strip_media(value: Any, depth: int = 0) -> Any:
     return value
 
 
+
+def token_for(state: Any, role: str, label: str) -> str | None:
+    found: list[str] = []
+
+    def walk(node: Any) -> None:
+        if isinstance(node, dict):
+            token = node.get("element_token")
+            node_role = str(node.get("role") or "")
+            node_label = str(node.get("label") or node.get("name") or node.get("title") or "")
+            if token and node_role == role and (not label or node_label == label):
+                found.append(str(token))
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+
+    walk(state)
+    return found[0] if found else None
+
+
+def refusal_code(payload: Any) -> str | None:
+    if isinstance(payload, dict):
+        refusal = payload.get("refusal")
+        if isinstance(refusal, dict) and refusal.get("code"):
+            return str(refusal["code"])
+        if payload.get("code"):
+            return str(payload["code"])
+        return None
+    text = str(payload)
+    start = text.find("{")
+    end = text.rfind("}")
+    if start >= 0 and end > start:
+        try:
+            return refusal_code(json.loads(text[start : end + 1]))
+        except json.JSONDecodeError:
+            return None
+    return None
 def window_app(listing: dict[str, Any], pid: int, window_id: int) -> str | None:
     windows = listing.get("windows") if isinstance(listing, dict) else None
     if not isinstance(windows, list):

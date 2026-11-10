@@ -85,12 +85,12 @@ class Store:
                 record["mice"].setdefault(mouse, mouse_record(session, mouse))
             return json.loads(json.dumps(record))
 
-    def mark_started(self, session: str, mouse: str) -> None:
+    def mark_started(self, session: str, mouse: str, started: bool = True) -> None:
         with self._locked() as state:
             record = state["sessions"].get(session) or {}
             mice = record.get("mice") or {}
             if mouse in mice:
-                mice[mouse]["started"] = True
+                mice[mouse]["started"] = started
 
     def driver_session(self, session: str, mouse: str) -> str | None:
         snap = self.snapshot()

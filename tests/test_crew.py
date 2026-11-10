@@ -255,5 +255,53 @@ class BrandTests(unittest.TestCase):
         self.assertEqual(token, "s:5")
 
 
+class HandsTests(unittest.TestCase):
+    def test_stale_token_is_refreshed_once(self) -> None:
+        from cuadrilla.cmux import Cmux
+        from cuadrilla.driver import DriverError
+        from cuadrilla.service import Service
+        from cuadrilla.store import Store
+
+        class Stale(FakeDriver):
+            def call(self, tool, args=None, timeout=None):
+                args = args or {}
+                self.calls.append((tool, args))
+                if tool == "start_session":
+                    return {"ok": True}
+                if tool == "list_windows":
+                    return {"windows": [{"pid": 11, "window_id": 2, "app_name": "Calculator"}]}
+                if tool == "get_window_state":
+                    return {"elements": [{"role": "AXButton", "label": "8", "element_token": "new"}]}
+                if tool == "click" and args.get("element_token") == "old":
+                    raise DriverError('{"refusal": {"code": "stale_element_token"}}')
+                if tool == "click":
+                    return {"ok": True, "effect": "confirmed"}
+                return {"ok": True}
+
+        driver = Stale()
+        service = Service(Store(Path(tempfile.mkdtemp())), driver, Cmux(lambda *_: None), idle_fn=lambda: 0.0, idle_wait=0.0)
+        opened = service.session_open(mice=1)
+        result = service.act(
+            opened["session"],
+            "m1",
+            "click",
+            {"pid": 11, "window_id": 2, "element_token": "old", "element_role": "AXButton", "element_label": "8", "lease_scope": "window"},
+        )
+        self.assertTrue(result["ok"], result)
+        clicks = [tool for tool, _args in driver.calls if tool == "click"]
+        self.assertEqual(len(clicks), 2)
+
+    def test_pill_names_the_ink(self) -> None:
+        from cuadrilla.cmux import pill_text
+
+        self.assertEqual(
+            pill_text({
+                "sessions": {"cw": {"mice": {"m1": {"ink": {"name": "Violet"}}}}},
+                "leases": [{"session": "cw", "mouse": "m1", "app": "TextEdit"}],
+            }),
+            "Violet TextEdit",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

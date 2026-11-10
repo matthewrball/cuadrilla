@@ -19,6 +19,13 @@ def render(kind: str, body: dict[str, Any]) -> str:
         return _opened(body)
     if kind == "demo":
         return _demo(body)
+    if kind == "press":
+        return f"{NAME.lower()}  pressed  {body.get('effect') or 'ok'}\n"
+    if kind == "type":
+        return f"{NAME.lower()}  typed  {body.get('effect') or 'ok'}\n"
+    if kind == "stop":
+        closed = ", ".join(body.get("closed") or []) or "nothing"
+        return f"{NAME.lower()}  closed  {closed}\n"
     if kind == "windows":
         return _windows(body)
     return _plain(kind, body)

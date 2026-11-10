@@ -10,7 +10,7 @@ from typing import Any, Callable, Optional
 
 from cuadrilla.cmux import Cmux
 from cuadrilla.driver import Driver, DriverError, parallel_lanes_built_in
-from cuadrilla.engine import MUTATING, VERIFY, fail, flatten_text, is_desktop, settle, strip_media, target_of, window_app
+from cuadrilla.engine import MUTATING, VERIFY, fail, flatten_text, is_desktop, refusal_code, settle, strip_media, target_of, token_for, window_app
 from cuadrilla.store import Store
 
 IdleFn = Callable[[], Optional[float]]
@@ -133,14 +133,20 @@ class Service:
         label = self.store.driver_session(session, mouse)
         if not label:
             return fail("no_mouse", f"{session} has no mouse {mouse}")
-        if self.store.mouse_started(session, mouse):
-            return None
         try:
             self.driver.call("start_session", {"session": label})
         except DriverError as exc:
-            return fail("driver", str(exc))
+            if "session has ended" not in str(exc) and self.store.mouse_started(session, mouse):
+                return None
+            return fail("driver", str(exc)[:300])
         self.store.mark_started(session, mouse)
         return None
+
+    def _revive(self, session: str, mouse: str, exc: DriverError) -> bool:
+        if "session has ended" not in str(exc):
+            return False
+        self.store.mark_started(session, mouse, False)
+        return self._ensure_cursor(session, mouse) is None
 
     def status(self) -> dict[str, Any]:
         snap = self.store.snapshot()
@@ -217,6 +223,8 @@ class Service:
         if tool in MUTATING and (pid is None or window_id is None):
             return fail("target_required", "pass pid and window_id for the window this mouse owns")
         scope = str(args.pop("lease_scope", "app"))
+        element_role = args.pop("element_role", None)
+        element_label = args.pop("element_label", None)
         if tool in MUTATING:
             resolved = app or self._app_name(pid or 0, window_id or 0)
             error = self.store.claim(session, mouse, pid or 0, window_id or 0, resolved, scope)
@@ -249,12 +257,14 @@ class Service:
             if delivery == "when_idle":
                 with self._foreground:
                     with lock:
-                        result = self.driver.call(tool, args)
+                        result, error = self._drive(tool, args, pid, window_id, label, element_role, element_label)
             else:
                 with lock:
-                    result = self.driver.call(tool, args)
+                    result, error = self._drive(tool, args, pid, window_id, label, element_role, element_label)
         except DriverError as exc:
-            return fail("driver", str(exc))
+            return fail("driver", str(exc)[:300])
+        if error:
+            return error
         self.cmux.publish(self.store.snapshot())
         if tool in {"type_text", "set_value"} and before is None and pid is not None and window_id is not None:
             try:
@@ -270,7 +280,8 @@ class Service:
             return fail("unconfirmed", "the window did not show the text. not retrying a false ok")
         if tool not in VERIFY or before is None:
             effect = result.get("effect")
-            return {"ok": effect in {None, "confirmed"}, "effect": effect or "unverifiable", "driver": strip_media(result), "session": session, "mouse": mouse, "app": app}
+            performed = effect == "unverifiable" and "Performed" in str((result or {}).get("summary") or "")
+            return {"ok": effect in {None, "confirmed"} or performed, "effect": effect or "unverifiable", "driver": strip_media(result), "session": session, "mouse": mouse, "app": app}
         try:
             after = self.driver.call(
                 "get_window_state",
@@ -284,4 +295,26 @@ class Service:
         settled["app"] = app
         settled["driver"] = strip_media(settled.get("driver"))
         return settled
+
+    def _drive(self, tool: str, args: dict[str, Any], pid: int | None, window_id: int | None, label: str | None, role: str | None, name: str | None) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        try:
+            return self.driver.call(tool, args), None
+        except DriverError as exc:
+            if refusal_code(str(exc)) != "stale_element_token" or not role or pid is None or window_id is None:
+                return None, fail("driver", str(exc)[:300])
+            fresh = self._refresh_token(pid, window_id, label, role, str(name or ""))
+            if not fresh:
+                return None, fail("stale_element_token", "the control changed. observe again")
+            args["element_token"] = fresh
+            try:
+                return self.driver.call(tool, args), None
+            except DriverError as again:
+                return None, fail("driver", str(again)[:300])
+
+    def _refresh_token(self, pid: int, window_id: int, label: str | None, role: str, name: str) -> str | None:
+        state = self.driver.call(
+            "get_window_state",
+            {"pid": pid, "window_id": window_id, "include_screenshot": False, "tree_format": "elements", "session": label},
+        )
+        return token_for(state, role, name)
 

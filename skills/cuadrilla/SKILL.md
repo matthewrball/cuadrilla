@@ -33,11 +33,13 @@ Each mouse is a cua-driver session, so each has its own overlay cursor.
 1. `list_windows`. Do not screenshot the desktop.
 2. `observe` the one window you will touch. `include_screenshot` stays off unless the tree has no control for the target.
 3. `act` with `pid`, `window_id`, and either `element_token` or `x`/`y` from that observe. Name the mouse.
-
 ```bash
-cuadrilla act cw-abc m1 click '{"pid":123,"window_id":45,"element_token":"..."}'
+cuadrilla press 7
+cuadrilla type cuad
+cuadrilla act cw-abc m1 click '{"pid":123,"window_id":45,"element_token":"...","element_role":"AXButton","element_label":"7"}'
 ```
 
+`press` and `type` use the open crew's leases. Pass `element_token` on `act`. If it is stale, Cuadrilla refreshes it once when `element_role` and `element_label` are set. `cuadrilla stop` closes every crew.
 `act` leases the app for that mouse. A second mouse, even in this session, gets `lease_conflict` and must pick another app. Pass `"lease_scope":"window"` only when two mice must work in different windows of one app.
 
 Delivery is `background`. `when_idle` waits until the user has stopped typing, then gives up. There is no focus-stealing mode.

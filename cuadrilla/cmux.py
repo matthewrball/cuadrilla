@@ -67,19 +67,34 @@ class Cmux:
         subprocess.run(argv, check=False, capture_output=True, text=True, timeout=5, env=env)
 
     def publish(self, state: dict[str, Any]) -> None:
-        sessions = state.get("sessions") or {}
-        leases = state.get("leases") or []
-        mice = sum(len((record.get("mice") or {})) for record in sessions.values())
-        apps = sorted({lease.get("app") for lease in leases if lease.get("app")})
-        held = ", ".join(apps[:4]) if apps else "idle"
-        value = f"{len(sessions)} crews · {mice} mice · {held}"
-        self._invoke(["cmux", "set-status", "cuadrilla", value, "--icon", "sparkle", "--color", "#7C6AF7", "--priority", "40"])
+        self._invoke(["cmux", "set-status", "cuadrilla", pill_text(state), "--icon", "sparkle", "--color", "#7C6AF7", "--priority", "40"])
 
     def conflict(self, message: str) -> None:
         self._invoke(["cmux", "notify", "--title", "Cuadrilla", "--body", message[:180], "--desktop", "false"])
 
     def clear(self) -> None:
         self._invoke(["cmux", "clear-status", "cuadrilla"])
+
+
+def pill_text(state: dict[str, Any]) -> str:
+    sessions = state.get("sessions") or {}
+    leases = state.get("leases") or []
+    parts = []
+    seen = set()
+    for lease in leases:
+        key = (lease.get("session"), lease.get("mouse"), lease.get("app"))
+        if key in seen:
+            continue
+        seen.add(key)
+        mice = ((sessions.get(lease.get("session")) or {}).get("mice") or {})
+        ink = ((mice.get(lease.get("mouse")) or {}).get("ink") or {}).get("name") or lease.get("mouse")
+        parts.append(f"{ink} {lease.get('app') or 'window'}")
+    if parts:
+        return " · ".join(parts[:4])
+    mice = sum(len((record.get("mice") or {})) for record in sessions.values())
+    if not sessions:
+        return "idle"
+    return f"{len(sessions)} crews · {mice} mice · idle"
 
 
 def mirror(state: dict[str, Any] | None = None, conflict: str = "") -> None:
