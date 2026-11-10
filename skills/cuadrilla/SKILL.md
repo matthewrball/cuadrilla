@@ -1,7 +1,7 @@
 ---
 name: cuadrilla
-description: Drive native apps as a crew. Each Cuadrilla session can own several mice, and several sessions can work at once without sharing windows or taking the desktop pointer. Use instead of cua-driver or computer-use when more than one agent is on the machine, when the user must keep working, or when a cmux pane should show the crew.
-version: 0.1.0
+description: Drive native apps as a Cuadrilla crew. Each session owns up to eight colored mice (Violet, Amber, Mint, Coral, Sky, Gold, Rose, Slate). Several sessions work at once without sharing an app or taking the desktop pointer. Use instead of cua-driver or computer-use when more than one agent is on the machine, when the user must keep working, or when a cmux pane should show the crew.
+version: 0.2.0
 metadata:
   openclaw:
     requires:

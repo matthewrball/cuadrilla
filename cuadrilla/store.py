@@ -9,6 +9,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
+from cuadrilla.brand import mouse_record
 from cuadrilla.engine import claim_lease, fail, release_leases
 
 
@@ -63,7 +64,7 @@ class Store:
                 "name": name,
                 "created": time.time(),
                 "cmux": cmux,
-                "mice": {mouse: {"driver_session": f"cuadrilla-{session}-{mouse}", "started": False} for mouse in mice},
+                "mice": {mouse: mouse_record(session, mouse) for mouse in mice},
             }
             state["sessions"][session] = record
             return json.loads(json.dumps(record))
@@ -81,7 +82,7 @@ class Store:
             if not record:
                 return None
             for mouse in mice:
-                record["mice"].setdefault(mouse, {"driver_session": f"cuadrilla-{session}-{mouse}", "started": False})
+                record["mice"].setdefault(mouse, mouse_record(session, mouse))
             return json.loads(json.dumps(record))
 
     def mark_started(self, session: str, mouse: str) -> None:

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" fill="none">
+  <path d="M28 18l14 40-8 2-3-9H17l-3 9-8-2 14-40h8zm-8 25h10l-5-15-5 15z" fill="#7C6AF7"/>
+  <path d="M62 22l12 36-7 2-2-8H56l-2 8-7-2 12-36h5zm-6 22h8l-4-13-4 13z" fill="#E2A23B"/>
+  <path d="M90 26l10 32-6 2-2-7H84l-2 7-6-2 10-32h4zm-5 20h6l-3-11-3 11z" fill="#3DDC97"/>
+  <text x="118" y="58" fill="#16141F" font-family="ui-sans-serif, system-ui, sans-serif" font-size="36" font-weight="650" letter-spacing="-0.04em">cuadrilla</text>
+</svg>

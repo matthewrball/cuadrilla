@@ -10,7 +10,7 @@ from typing import Any, Callable, Optional
 
 from cuadrilla.cmux import Cmux
 from cuadrilla.driver import Driver, DriverError, parallel_lanes_built_in
-from cuadrilla.engine import MUTATING, VERIFY, fail, is_desktop, settle, strip_media, target_of, window_app
+from cuadrilla.engine import MUTATING, VERIFY, fail, flatten_text, is_desktop, settle, strip_media, target_of, window_app
 from cuadrilla.store import Store
 
 IdleFn = Callable[[], Optional[float]]
@@ -234,7 +234,9 @@ class Service:
             if blocked:
                 return blocked
         before = None
-        if tool in VERIFY and pid is not None and window_id is not None:
+        # A fresh get_window_state invalidates element_token. Read before only
+        # when the action does not already carry a token from the last observe.
+        if tool in VERIFY and pid is not None and window_id is not None and "element_token" not in args:
             try:
                 before = self.driver.call(
                     "get_window_state",
@@ -254,6 +256,18 @@ class Service:
         except DriverError as exc:
             return fail("driver", str(exc))
         self.cmux.publish(self.store.snapshot())
+        if tool in {"type_text", "set_value"} and before is None and pid is not None and window_id is not None:
+            try:
+                after = self.driver.call(
+                    "get_window_state",
+                    {"pid": pid, "window_id": window_id, "include_screenshot": False, "tree_format": "elements", "session": label},
+                )
+            except DriverError as exc:
+                return fail("driver", f"action ran but verification failed: {exc}")
+            text = str(args.get("text") or args.get("value") or "")
+            if text and text in flatten_text(after):
+                return {"ok": True, "effect": "confirmed", "session": session, "mouse": mouse, "app": app}
+            return fail("unconfirmed", "the window did not show the text. not retrying a false ok")
         if tool not in VERIFY or before is None:
             effect = result.get("effect")
             return {"ok": effect in {None, "confirmed"}, "effect": effect or "unverifiable", "driver": strip_media(result), "session": session, "mouse": mouse, "app": app}

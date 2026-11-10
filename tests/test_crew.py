@@ -169,6 +169,15 @@ class ServiceTests(unittest.TestCase):
         self.assertLessEqual(same[0][2], same[1][1] + 0.02)
         self.assertTrue(same[0][1] < other[0][2] and other[0][1] < same[0][2] or same[1][1] < other[0][2] and other[0][1] < same[1][2])
 
+    def test_a_click_token_is_not_refreshed_away(self) -> None:
+        opened = self.service.session_open(mice=1)
+        self.driver.calls.clear()
+        self.service.act(opened["session"], "m1", "click", {"pid": 11, "window_id": 2, "element_token": "tok", "lease_scope": "window", "x": 1, "y": 1})
+        tools = [tool for tool, _args in self.driver.calls]
+        self.assertIn("click", tools)
+        if "get_window_state" in tools:
+            self.assertLess(tools.index("click"), tools.index("get_window_state"))
+
 
 class InstallTests(unittest.TestCase):
 
@@ -211,6 +220,39 @@ class McpTests(unittest.TestCase):
         self.assertIn("session_current", names)
         self.assertIn("act", names)
         self.assertIn("mice_add", names)
+
+
+class BrandTests(unittest.TestCase):
+    def test_mice_keep_stable_inks(self) -> None:
+        from cuadrilla.brand import ink_for
+
+        self.assertEqual(ink_for("m1")["name"], "Violet")
+        self.assertEqual(ink_for("m2")["name"], "Amber")
+        self.assertEqual(ink_for("m1")["hex"], ink_for("m1")["hex"])
+        self.assertNotEqual(ink_for("m1")["hex"], ink_for("m2")["hex"])
+
+    def test_status_names_the_ink_and_the_app(self) -> None:
+        from cuadrilla.present import render
+
+        text = render("status", {
+            "ok": True,
+            "sessions": {"cw-1": {"name": "demo", "mice": {"m1": {"ink": {"name": "Violet"}}}}},
+            "leases": [{"session": "cw-1", "mouse": "m1", "app": "TextEdit"}],
+        })
+        self.assertIn("Violet", text)
+        self.assertIn("TextEdit", text)
+        self.assertIn("demo", text)
+
+    def test_open_panels_are_not_demo_targets(self) -> None:
+        from cuadrilla.demo import _token, _window
+
+        listing = {"windows": [
+            {"app_name": "TextEdit", "title": "Open", "pid": 1, "window_id": 2},
+            {"app_name": "TextEdit", "title": "cuadrilla-demo.txt", "pid": 1, "window_id": 3},
+        ]}
+        self.assertEqual(_window(listing, "TextEdit", prefer="cuadrilla-demo")["window_id"], 3)
+        token = _token({"elements": [{"role": "AXButton", "label": "7", "element_token": "s:5"}]}, "AXButton", "7")
+        self.assertEqual(token, "s:5")
 
 
 if __name__ == "__main__":

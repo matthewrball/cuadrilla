@@ -11,8 +11,9 @@ from cuadrilla.daemon import request, serve
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="cuadrilla", description="A crew of computer-use mice that do not take the desktop.")
-    parser.add_argument("--version", action="version", version=__version__)
+    parser = argparse.ArgumentParser(prog="cuadrilla", description="A crew, not a takeover.")
+    parser.add_argument("--version", action="version", version=f"cuadrilla {__version__}")
+    parser.add_argument("--json", action="store_true", help="print raw JSON")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("serve", help="run the local crew daemon")
@@ -21,6 +22,8 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("status")
     sub.add_parser("install")
     sub.add_parser("uninstall")
+    demo = sub.add_parser("demo", help="two mice, Calculator and a scratch TextEdit file, no focus steal")
+    demo.add_argument("--keep", action="store_true", help="leave the crew and its cursors open")
 
     open_p = sub.add_parser("session")
     session_sub = open_p.add_subparsers(dest="session_cmd", required=True)
@@ -86,18 +89,31 @@ def main(argv: list[str] | None = None) -> int:
         return uninstall()
     body = _call(args)
     _mirror(args, body)
-    json.dump(body, sys.stdout, indent=2)
-    sys.stdout.write("\n")
+    if args.json:
+        json.dump(body, sys.stdout, indent=2)
+        sys.stdout.write("\n")
+    else:
+        from cuadrilla.present import render
+
+        sys.stdout.write(render(_kind(args), body))
     return 0 if body.get("ok", True) else 1
+
+
+def _kind(args: argparse.Namespace) -> str:
+    if args.cmd == "session" and getattr(args, "session_cmd", "") == "open":
+        return "session_open"
+    if args.cmd == "session" and getattr(args, "session_cmd", "") == "close":
+        return "session_close"
+    return args.cmd
 
 
 def _mirror(args: argparse.Namespace, body: dict) -> None:
     from cuadrilla.cmux import mirror
 
-    if args.cmd not in {"doctor", "status", "windows", "session", "mice", "observe", "lease", "release", "act"}:
+    if args.cmd not in {"doctor", "status", "windows", "session", "mice", "observe", "lease", "release", "act", "demo"}:
         return
     state = body if "sessions" in body else None
-    if state is None and args.cmd in {"session", "mice", "lease", "release", "act", "status"}:
+    if state is None and args.cmd in {"session", "mice", "lease", "release", "act", "status", "demo"}:
         try:
             state = request("status")
         except Exception:
@@ -108,6 +124,10 @@ def _mirror(args: argparse.Namespace, body: dict) -> None:
 def _call(args: argparse.Namespace) -> dict:
     if args.cmd == "doctor":
         return request("doctor")
+    if args.cmd == "demo":
+        from cuadrilla.demo import run_demo
+
+        return run_demo(request, keep=args.keep)
     if args.cmd == "status":
         return request("status")
     if args.cmd == "windows":

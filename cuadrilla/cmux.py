@@ -73,7 +73,7 @@ class Cmux:
         apps = sorted({lease.get("app") for lease in leases if lease.get("app")})
         held = ", ".join(apps[:4]) if apps else "idle"
         value = f"{len(sessions)} crews · {mice} mice · {held}"
-        self._invoke(["cmux", "set-status", "cuadrilla", value, "--icon", "sparkle", "--color", "#c4b5fd", "--priority", "40"])
+        self._invoke(["cmux", "set-status", "cuadrilla", value, "--icon", "sparkle", "--color", "#7C6AF7", "--priority", "40"])
 
     def conflict(self, message: str) -> None:
         self._invoke(["cmux", "notify", "--title", "Cuadrilla", "--body", message[:180], "--desktop", "false"])
