@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://matthewrball.github.io/cuadrilla/</loc>
-  </url>
-  <url>
-    <loc>https://matthewrball.github.io/cuadrilla/llms.txt</loc>
-  </url>
+  <url><loc>https://matthewrball.github.io/cuadrilla/</loc></url>
+  <url><loc>https://matthewrball.github.io/cuadrilla/compare.html</loc></url>
+  <url><loc>https://matthewrball.github.io/cuadrilla/install.html</loc></url>
+  <url><loc>https://matthewrball.github.io/cuadrilla/llms.txt</loc></url>
 </urlset>

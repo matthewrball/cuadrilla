@@ -255,6 +255,23 @@ footer {
   border-top: 1px solid var(--line);
 }
 
+.crumbs {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 1.5rem 0 0;
+}
+
+.crumbs a { color: var(--muted); }
+
+ol.steps {
+  max-width: var(--measure);
+  padding-left: 1.25rem;
+}
+
+ol.steps li { margin: 0.7rem 0; }
+
+ol.steps p { margin: 0.25rem 0 0; }
+
 @media (max-width: 800px) {
   .facts, .grid, .limits { grid-template-columns: 1fr; }
   header { align-items: flex-start; }

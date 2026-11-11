@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Install Cuadrilla</title>
+  <meta name="description" content="Install Cuadrilla on macOS: install cua-driver, clone the repo, run install.sh. Agents then see a skill and an MCP server named cuadrilla.">
+  <link rel="canonical" href="https://matthewrball.github.io/cuadrilla/install.html">
+  <meta property="og:title" content="Install Cuadrilla">
+  <meta property="og:description" content="Three commands. Then press a button without taking the pointer.">
+  <meta property="og:url" content="https://matthewrball.github.io/cuadrilla/install.html">
+  <meta property="og:image" content="https://matthewrball.github.io/cuadrilla/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Install Cuadrilla",
+    "description": "Install cua-driver, clone Cuadrilla, and run install.sh so agents can drive leased apps without taking the desktop pointer.",
+    "totalTime": "PT5M",
+    "tool": [
+      { "@type": "HowToTool", "name": "cua-driver" },
+      { "@type": "HowToTool", "name": "git" }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Install cua-driver",
+        "text": "Install cua-driver from https://cua.ai/docs/cua-driver/guides/install and grant Accessibility and Screen Recording to Cua Driver."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Clone and install",
+        "text": "Run git clone --depth 1 https://github.com/matthewrball/cuadrilla.git and then ./cuadrilla/install.sh."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Restart open agents",
+        "text": "Restart an agent that is already open so it reconnects the cuadrilla MCP server. The skill is on disk immediately."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Try a crew",
+        "text": "Run cuadrilla demo --keep, then cuadrilla press 1 and cuadrilla type hello. Close every crew with cuadrilla stop."
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="index.html">Cuadrilla</a>
+      <nav class="nav" aria-label="Page">
+        <a href="compare.html">Compare</a>
+        <a href="install.html" aria-current="page">Install</a>
+        <a class="button" href="https://github.com/matthewrball/cuadrilla">Read the source</a>
+      </nav>
+    </header>
+    <main id="main">
+      <p class="crumbs"><a href="index.html">Cuadrilla</a> / Install</p>
+      <section class="hero">
+        <h1>Install Cuadrilla</h1>
+        <p class="lede">macOS is the tested host. You need <a href="https://cua.ai/docs/cua-driver/guides/install">cua-driver</a> first, with Accessibility and Screen Recording granted to Cua Driver.</p>
+      </section>
+      <section class="section">
+        <ol class="steps">
+          <li>
+            <strong>Clone the repo and run the installer.</strong>
+            <div class="install"><pre><code>git clone --depth 1 https://github.com/matthewrball/cuadrilla.git
+./cuadrilla/install.sh</code></pre></div>
+            <p>That links <code>~/.local/bin/cuadrilla</code>, writes the skill for Claude, Codex, Hermes, and omp, and adds an MCP server named <code>cuadrilla</code>.</p>
+          </li>
+          <li>
+            <strong>Restart an agent that is already open.</strong>
+            <p>The skill is on disk immediately. MCP reconnects when the agent starts again.</p>
+          </li>
+          <li>
+            <strong>Try a crew without taking the pointer.</strong>
+            <div class="install"><pre><code>cuadrilla demo --keep
+cuadrilla press 1
+cuadrilla type hello
+cuadrilla stop</code></pre></div>
+          </li>
+        </ol>
+        <p><a href="compare.html">See how this differs from a desktop takeover</a></p>
+      </section>
+    </main>
+    <footer>
+      <p>Cuadrilla. A crew, not a takeover.</p>
+      <p><a href="index.html">Home</a> · <a href="compare.html">Compare</a> · <a href="https://github.com/matthewrball/cuadrilla">Source</a></p>
+    </footer>
+  </div>
+</body>
+</html>
