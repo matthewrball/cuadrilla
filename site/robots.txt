@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://matthewrball.github.io/cuadrilla/sitemap.xml

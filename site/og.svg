@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#121018"/>
+  <polygon points="96,150 96,310 150,268 184,336 214,320 180,252 246,246" fill="#7C6AF7"/>
+  <polygon points="250,190 250,318 292,286 318,340 342,327 316,273 368,268" fill="#E2A23B"/>
+  <polygon points="372,224 372,328 406,302 426,344 446,334 426,292 468,288" fill="#3DDC97"/>
+  <text x="96" y="450" fill="#F4F1EA" font-family="ui-sans-serif, system-ui, sans-serif" font-size="92" font-weight="650" letter-spacing="-3">Cuadrilla</text>
+  <text x="96" y="516" fill="#B7B0C4" font-family="ui-sans-serif, system-ui, sans-serif" font-size="36">A crew, not a takeover.</text>
+</svg>

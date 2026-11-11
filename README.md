@@ -1,6 +1,6 @@
 # Cuadrilla
 
-A crew of computer-use agents. Each session owns one or more mice. Several sessions work at once. They do not share windows, and they do not take the desktop pointer.
+A crew of computer-use agents. Each session owns one or more mice. Several sessions work at once. They do not share windows, and they do not take the desktop pointer. Site: https://matthewrball.github.io/cuadrilla/
 
 The name is the Spanish word for a work crew. CUA is the start of the word. The mark is three pointers: Violet, Amber, Mint. A session's mice keep those inks, in order, through Slate.
 

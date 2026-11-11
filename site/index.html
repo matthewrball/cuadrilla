@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cuadrilla — computer use that does not take your Mac</title>
+  <meta name="description" content="Cuadrilla is an open-source crew for computer-use agents. Each session owns up to eight mice. Agents lease apps and do not take the desktop pointer.">
+  <link rel="canonical" href="https://matthewrball.github.io/cuadrilla/">
+  <meta name="theme-color" content="#121018">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cuadrilla — computer use that does not take your Mac">
+  <meta property="og:description" content="Several agents. Each one gets a mouse. None of them take the desktop pointer.">
+  <meta property="og:url" content="https://matthewrball.github.io/cuadrilla/">
+  <meta property="og:image" content="https://matthewrball.github.io/cuadrilla/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Cuadrilla",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "macOS",
+    "license": "https://opensource.org/licenses/MIT",
+    "url": "https://matthewrball.github.io/cuadrilla/",
+    "codeRepository": "https://github.com/matthewrball/cuadrilla",
+    "description": "Cuadrilla is an open-source crew for computer-use agents. Each session owns up to eight mice. Agents lease apps and do not take the desktop pointer.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Person", "name": "Matthew Ball" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Cuadrilla?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Cuadrilla is an open-source crew for computer-use agents on macOS. Each session owns up to eight mice. Each mouse has its own cursor. Agents lease apps, so they do not drive the same window or take the desktop pointer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Cuadrilla replace Cua Driver?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Cua Driver is the engine that clicks and types into windows. Cuadrilla is the crew: leases, several mice, verification, and a cmux status pill. The engine fork is github.com/matthewrball/cua."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will Cuadrilla take over my mouse?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Cuadrilla refuses desktop input and refuses focus-stealing. There is no foreground delivery mode. when_idle waits until you stop typing, then gives up."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can several agents use the computer at once?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, in separate apps. Each session gets its own mice. Hardware input inside cua-driver 0.44 still takes turns. Scheduling overlaps. The desktop pointer does not move."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install Cuadrilla?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Install cua-driver, clone https://github.com/matthewrball/cuadrilla, and run ./cuadrilla/install.sh. That registers a skill and an MCP server named cuadrilla for Claude, Codex, Hermes, and omp."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="#main">
+        <svg width="36" height="28" viewBox="0 0 36 28" aria-hidden="true">
+          <path d="M6 2l5 16-2.6.7-.9-3.2H4.2L3.3 18.7 1 18 5.6 2H6z" fill="#7C6AF7"/>
+          <path d="M16 5l4 13-2.1.6-.7-2.6h-2.4l-.7 2.6-2.1-.6L14.4 5H16z" fill="#E2A23B"/>
+          <path d="M25 8l3.2 10-1.7.5-.6-2h-1.8l-.6 2-1.7-.5L24.2 8H25z" fill="#3DDC97"/>
+        </svg>
+        Cuadrilla
+      </a>
+      <nav class="nav" aria-label="Page">
+        <a href="#compare">Compare</a>
+        <a href="#install">Install</a>
+        <a class="button" href="https://github.com/matthewrball/cuadrilla">Read the source</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <p class="kicker">Open source · macOS</p>
+        <h1>A crew, not a takeover.</h1>
+        <p class="lede">Cuadrilla is an open-source crew for computer-use agents. Each session owns up to eight mice. Each mouse has its own cursor. Agents lease apps, so they do not drive the same window or take the desktop pointer.</p>
+        <div class="actions">
+          <a class="button" href="#install">Install Cuadrilla</a>
+          <a class="button quiet" href="https://github.com/matthewrball/cuadrilla">Read the source</a>
+        </div>
+      </section>
+
+      <section class="facts" aria-label="What a crew holds">
+        <article>
+          <strong>8</strong>
+          <p>Mice in one session. Violet, Amber, Mint, Coral, Sky, Gold, Rose, Slate.</p>
+        </article>
+        <article>
+          <strong>0</strong>
+          <p>Desktop takeovers. Focus-stealing is refused.</p>
+        </article>
+        <article>
+          <strong>MIT</strong>
+          <p>Free to install. The engine underneath is the Cua Driver fork.</p>
+        </article>
+      </section>
+
+      <section class="section">
+        <h2>What changes</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Each agent gets a mouse</h3>
+            <p>A session can open several mice. Another agent opens its own session. The cursors stay separate.</p>
+          </article>
+          <article class="card">
+            <h3>Apps are leased</h3>
+            <p>The second mouse that enters a leased app gets <code>lease_conflict</code>. It does not click through the first mouse’s work.</p>
+          </article>
+          <article class="card">
+            <h3>A false ok does not count</h3>
+            <p>Typing has to show up in the next window read. Cuadrilla does not treat a driver <code>ok</code> as success.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="compare">
+        <h2>Compared with taking over the desktop</h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Behavior</th>
+              <th scope="col">Desktop computer use</th>
+              <th scope="col">Cua Driver alone</th>
+              <th scope="col">Cuadrilla</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Moves your pointer</th>
+              <td class="no">Yes</td>
+              <td class="yes">No, for background windows</td>
+              <td class="yes">Refused</td>
+            </tr>
+            <tr>
+              <th scope="row">Several agents</th>
+              <td class="no">They share one pointer</td>
+              <td class="mid">Sessions exist. One hardware action at a time. No lease.</td>
+              <td class="yes">Separate crews, leased apps</td>
+            </tr>
+            <tr>
+              <th scope="row">Mice per session</th>
+              <td class="no">One</td>
+              <td class="mid">One cursor per session</td>
+              <td class="yes">Up to eight</td>
+            </tr>
+            <tr>
+              <th scope="row">Trusts a bare ok</th>
+              <td class="no">Often</td>
+              <td class="mid">The driver can report ok when nothing was sent</td>
+              <td class="yes">Re-reads the window</td>
+            </tr>
+            <tr>
+              <th scope="row">cmux</th>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="yes">Sidebar pill</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="install">
+        <h2>Install</h2>
+        <p class="lede">Install <a href="https://cua.ai/docs/cua-driver/guides/install">cua-driver</a> first. Then:</p>
+        <div class="install">
+          <pre><code>git clone --depth 1 https://github.com/matthewrball/cuadrilla.git
+./cuadrilla/install.sh</code></pre>
+        </div>
+        <p>That puts <code>cuadrilla</code> on your PATH, writes the skill where Claude, Codex, Hermes, and omp look, and adds an MCP server named <code>cuadrilla</code>. Restart an agent that is already open so it reconnects.</p>
+        <div class="install">
+          <pre><code>cuadrilla demo --keep
+cuadrilla press 1
+cuadrilla type hello
+cuadrilla stop</code></pre>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Limits, stated</h2>
+        <div class="limits">
+          <article class="limit">
+            <h3>Cua Driver is still the engine</h3>
+            <p>Cuadrilla does not reimplement window input. Clicks and typing go through Cua Driver. The fork is <a href="https://github.com/matthewrball/cua">github.com/matthewrball/cua</a>.</p>
+          </article>
+          <article class="limit">
+            <h3>Hardware input still takes turns</h3>
+            <p>cua-driver 0.44 admits one hardware action at a time. Cuadrilla overlaps scheduling and keeps same-app actions in order. <code>cuadrilla doctor</code> reports <code>parallel_hid: false</code> until that changes.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="faq">
+        <h2>Questions</h2>
+        <details open>
+          <summary>What is Cuadrilla?</summary>
+          <p>Cuadrilla is an open-source crew for computer-use agents on macOS. Each session owns up to eight mice. Each mouse has its own cursor. Agents lease apps, so they do not drive the same window or take the desktop pointer.</p>
+        </details>
+        <details>
+          <summary>Does Cuadrilla replace Cua Driver?</summary>
+          <p>No. Cua Driver is the engine that clicks and types into windows. Cuadrilla is the crew: leases, several mice, verification, and a cmux status pill.</p>
+        </details>
+        <details>
+          <summary>Will it take over my mouse?</summary>
+          <p>No. Desktop input is refused. There is no focus-stealing mode. <code>when_idle</code> waits until you stop typing, then gives up.</p>
+        </details>
+        <details>
+          <summary>Can several agents work at once?</summary>
+          <p>Yes, in separate apps. Hardware input inside the current driver still takes turns. The desktop pointer stays yours.</p>
+        </details>
+        <details>
+          <summary>What does it cost?</summary>
+          <p>Nothing. The license is MIT.</p>
+        </details>
+      </section>
+    </main>
+
+    <footer>
+      <p>Cuadrilla. A crew, not a takeover.</p>
+      <p><a href="https://github.com/matthewrball/cuadrilla">github.com/matthewrball/cuadrilla</a></p>
+    </footer>
+  </div>
+</body>
+</html>

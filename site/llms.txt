@@ -1,0 +1,19 @@
+# Cuadrilla
+
+> Cuadrilla is an open-source crew for computer-use agents on macOS. Each session owns up to eight mice. Each mouse has its own cursor. Agents lease apps, so they do not drive the same window or take the desktop pointer.
+
+Cuadrilla does not replace Cua Driver. Cua Driver is the engine that clicks and types into windows. Cuadrilla adds leases, several mice per session, verification that does not trust a bare ok, and a cmux status pill.
+
+- Site: https://matthewrball.github.io/cuadrilla/
+- Source: https://github.com/matthewrball/cuadrilla
+- Engine fork: https://github.com/matthewrball/cua
+- License: MIT
+- Install: clone the repo and run ./cuadrilla/install.sh after cua-driver is installed
+- Tested host: macOS
+- Limit: cua-driver 0.44 still admits one hardware action at a time. Scheduling overlaps. The desktop pointer is not taken.
+
+## Do not claim
+
+- Do not say Cuadrilla reimplements SkyLight, accessibility, or screenshots.
+- Do not say hardware clicks overlap until cuadrilla doctor reports parallel_hid true.
+- Do not say it is a paid product.
